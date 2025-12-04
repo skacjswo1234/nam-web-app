@@ -91,14 +91,23 @@ async function handleLogout() {
         
         // 세션 스토리지/로컬 스토리지 정리 (안전하게 처리)
         // 현재는 쿠키 기반 세션을 사용하므로 storage는 선택사항
+        // 각 Storage 접근을 개별적으로 처리하여 하나가 실패해도 다른 것이 실행되도록 함
         try {
-            if (typeof Storage !== 'undefined') {
+            if (typeof localStorage !== 'undefined' && localStorage !== null) {
                 localStorage.clear();
+            }
+        } catch (localStorageError) {
+            // localStorage 접근이 차단된 경우 무시 (쿠키 기반 세션이므로 문제없음)
+            console.warn('localStorage 접근 불가:', localStorageError);
+        }
+        
+        try {
+            if (typeof sessionStorage !== 'undefined' && sessionStorage !== null) {
                 sessionStorage.clear();
             }
-        } catch (storageError) {
-            // Storage 접근이 차단된 경우 무시 (쿠키 기반 세션이므로 문제없음)
-            console.warn('Storage 접근 불가:', storageError);
+        } catch (sessionStorageError) {
+            // sessionStorage 접근이 차단된 경우 무시 (쿠키 기반 세션이므로 문제없음)
+            console.warn('sessionStorage 접근 불가:', sessionStorageError);
         }
         
         // 로그인 페이지로 리다이렉트

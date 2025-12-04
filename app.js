@@ -231,35 +231,39 @@ function signupWithGoogle() {
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    // 로그인 폼 자동완성 방지 (선택사항)
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.setAttribute('autocomplete', 'off');
-    }
-    
-    // 회원가입 폼 자동완성 방지 (선택사항)
-    const signupForm = document.getElementById('signupForm');
-    if (signupForm) {
-        signupForm.setAttribute('autocomplete', 'off');
-    }
-    
-    // 비밀번호 확인 실시간 검증
-    const passwordConfirm = document.getElementById('passwordConfirm');
-    if (passwordConfirm) {
-        passwordConfirm.addEventListener('input', function() {
-            const password = document.getElementById('password').value;
-            if (this.value && password !== this.value) {
-                this.setCustomValidity('비밀번호가 일치하지 않습니다.');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-    }
-    
-    // 회원가입 성공 메시지 표시
-    // URL 파라미터에서 signup=success가 있으면 성공 메시지 표시
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('signup') === 'success') {
+    // Storage 접근 차단 에러 방지
+    // Cloudflare Pages나 특정 브라우저 환경에서 storage 접근이 제한될 수 있음
+    // 에러를 무시하고 계속 진행하도록 처리
+    try {
+        // 로그인 폼 자동완성 방지 (선택사항)
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.setAttribute('autocomplete', 'off');
+        }
+        
+        // 회원가입 폼 자동완성 방지 (선택사항)
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+            signupForm.setAttribute('autocomplete', 'off');
+        }
+        
+        // 비밀번호 확인 실시간 검증
+        const passwordConfirm = document.getElementById('passwordConfirm');
+        if (passwordConfirm) {
+            passwordConfirm.addEventListener('input', function() {
+                const password = document.getElementById('password').value;
+                if (this.value && password !== this.value) {
+                    this.setCustomValidity('비밀번호가 일치하지 않습니다.');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+        }
+        
+        // 회원가입 성공 메시지 표시
+        // URL 파라미터에서 signup=success가 있으면 성공 메시지 표시
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('signup') === 'success') {
         // 성공 메시지를 에러 메시지 영역에 표시 (스타일 재사용)
         const errorEl = document.getElementById('error-message');
         if (errorEl) {
@@ -273,8 +277,22 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 errorEl.style.display = 'none';
                 // URL에서 파라미터 제거 (새로고침 시 메시지가 다시 나타나지 않도록)
-                window.history.replaceState({}, document.title, window.location.pathname);
+                // 안전하게 처리 (일부 환경에서 history API 접근이 제한될 수 있음)
+                try {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                } catch (historyError) {
+                    // history API 접근이 차단된 경우 무시
+                    console.warn('History API 접근 불가:', historyError);
+                }
             }, 5000);
+        }
+    } catch (error) {
+        // Storage나 다른 API 접근 오류가 발생해도 페이지는 정상 동작하도록 처리
+        // 에러를 콘솔에만 기록하고 사용자에게는 표시하지 않음
+        if (error.message && error.message.includes('storage')) {
+            console.warn('Storage 접근이 제한된 환경입니다:', error.message);
+        } else {
+            console.warn('초기화 중 오류 발생 (무시됨):', error);
         }
     }
 });

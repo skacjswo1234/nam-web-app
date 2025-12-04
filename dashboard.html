@@ -45,7 +45,7 @@
                             <span>설정</span>
                         </div>
                         <div class="dropdown-divider"></div>
-                        <div class="dropdown-item" onclick="handleLogout()">
+                        <div class="dropdown-item" onclick="handleLogout().catch(err => console.error('로그아웃 처리 중 오류:', err))">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path d="M6 14H3C2.44772 14 2 13.5523 2 13V3C2 2.44772 2.44772 2 3 2H6M10 11L14 7M14 7L10 3M14 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
