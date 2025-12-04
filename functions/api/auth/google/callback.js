@@ -105,9 +105,8 @@ export async function onRequestGet(context) {
     const sessionId = await createSession(env['nam-web-app-db'], user.id, 30); // 30일
     
     // 9. 성공 응답 생성 및 리디렉션
-    const response = Response.redirect(`${new URL(request.url).origin}/main.html`, 302);
-    
-    // 세션 쿠키 설정
+    // Response.redirect()는 immutable이므로 헤더를 포함한 새 Response 생성
+    const redirectUrl = `${new URL(request.url).origin}/main.html`;
     const cookieOptions = [
       `session=${sessionId}`,
       'HttpOnly',
@@ -117,10 +116,16 @@ export async function onRequestGet(context) {
       `Max-Age=${30 * 24 * 60 * 60}`, // 30일
     ].join('; ');
     
-    response.headers.set('Set-Cookie', cookieOptions);
+    // Headers 객체를 먼저 생성하여 여러 Set-Cookie 헤더 설정
+    const headers = new Headers();
+    headers.set('Location', redirectUrl);
+    headers.set('Set-Cookie', cookieOptions);
+    headers.append('Set-Cookie', 'oauth_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
     
-    // oauth_state 쿠키 제거
-    response.headers.append('Set-Cookie', 'oauth_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0');
+    const response = new Response(null, {
+      status: 302,
+      headers: headers
+    });
     
     return response;
     

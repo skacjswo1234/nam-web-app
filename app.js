@@ -302,13 +302,19 @@ async function checkLoginStatus() {
             credentials: 'include'
         });
         
+        // 401 (Unauthorized)는 로그인하지 않은 상태이므로 정상 동작
+        // 에러로 표시하지 않도록 조용히 처리
+        if (response.status === 401) {
+            // 로그인하지 않은 상태 - 정상 동작이므로 아무것도 하지 않음
+            return;
+        }
+        
         // 응답이 JSON인지 확인
         let data;
         try {
             data = await response.json();
         } catch (jsonError) {
             // JSON 파싱 실패 시 무시 (로그인 페이지 계속 표시)
-            console.warn('로그인 상태 확인 응답 파싱 오류 (무시됨):', jsonError);
             return;
         }
         
@@ -317,9 +323,8 @@ async function checkLoginStatus() {
             window.location.href = '/main.html';
         }
     } catch (error) {
-        // 에러가 발생해도 로그인 페이지는 계속 표시
-        // (네트워크 오류 등으로 인한 것일 수 있음)
-        console.warn('로그인 상태 확인 중 오류 (무시됨):', error);
+        // 네트워크 오류 등만 조용히 무시
+        // (로그인하지 않은 상태는 정상이므로 에러로 표시하지 않음)
     }
 }
 
