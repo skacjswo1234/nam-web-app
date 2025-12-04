@@ -20,8 +20,8 @@ body {
 
 /* 헤더 스타일 */
 .main-header {
-    background: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
+    background: #000000;
+    border-bottom: 1px solid #333333;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -49,12 +49,12 @@ body {
 }
 
 .header-logo .logo-img {
-    height: 60px;
+    height: 80px;
     width: auto;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
     image-rendering: high-quality;
-    filter: contrast(1.1);
+    filter: contrast(1.2) brightness(1.1);
 }
 
 /* 사용자 메뉴 스타일 */
@@ -73,17 +73,17 @@ body {
     gap: 10px;
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #333333;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
     font-size: 14px;
-    color: #1a1a1a;
+    color: #ffffff;
 }
 
 .user-button:hover {
-    background: #f9fafb;
-    border-color: #d1d5db;
+    background: #1a1a1a;
+    border-color: #555555;
 }
 
 .user-avatar {
@@ -185,7 +185,7 @@ body {
     }
 
     .header-logo .logo-img {
-        height: 48px;
+        height: 64px;
     }
 
     .user-name {
