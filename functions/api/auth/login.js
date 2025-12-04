@@ -47,17 +47,39 @@ export async function onRequestPost(context) {
     const user = await getUserByEmail(env['nam-web-app-db'], email);
 
     // 4. 사용자 존재 여부 확인
-    // 사용자가 없거나 비밀번호 해시가 없으면 로그인 실패
-    if (!user || !user.password_hash) {
-      // 보안상 구체적인 오류 메시지 대신 일반적인 메시지 반환
-      // 이메일이 존재하는지 비밀번호가 틀렸는지 구분하지 않음 (보안 강화)
+    // 가입이 안 된 사용자는 로그인 불가
+    if (!user) {
+      // 가입되지 않은 사용자 - 회원가입/소셜 로그인 유도
       return Response.json(
-        { success: false, error: '이메일 또는 비밀번호가 올바르지 않습니다.' },
+        { 
+          success: false, 
+          error: '가입되지 않은 이메일입니다.',
+          suggestSignup: true // 회원가입/소셜 로그인 유도 플래그
+        },
         { status: 401 } // 401 Unauthorized: 인증 실패
       );
     }
 
-    // 5. 계정 상태 확인
+    // 5. 소셜 로그인 사용자 확인
+    // 비밀번호 해시가 없으면 소셜 로그인으로 가입한 사용자
+    if (!user.password_hash) {
+      // 소셜 로그인 사용자는 일반 로그인 불가
+      const providerName = user.provider === 'google' ? '구글' : 
+                           user.provider === 'kakao' ? '카카오' :
+                           user.provider === 'naver' ? '네이버' :
+                           user.provider === 'facebook' ? '페이스북' : '소셜';
+      return Response.json(
+        { 
+          success: false, 
+          error: `${providerName} 로그인으로 가입한 계정입니다. 소셜 로그인을 이용해주세요.`,
+          isSocialLogin: true, // 소셜 로그인 사용자 플래그
+          provider: user.provider // 소셜 로그인 제공자
+        },
+        { status: 403 } // 403 Forbidden: 접근 금지
+      );
+    }
+
+    // 6. 계정 상태 확인
     // 비활성화되거나 정지된 계정은 로그인 불가
     if (user.status !== 'active') {
       return Response.json(
@@ -66,7 +88,7 @@ export async function onRequestPost(context) {
       );
     }
 
-    // 6. 비밀번호 검증
+    // 7. 비밀번호 검증
     // 입력한 평문 비밀번호와 저장된 해시 비교
     const isPasswordValid = await verifyPassword(password, user.password_hash);
     
@@ -78,17 +100,17 @@ export async function onRequestPost(context) {
       );
     }
 
-    // 7. 세션 생성
+    // 8. 세션 생성
     // 로그인 성공 시 세션 생성 (쿠키에 저장)
     // keepLogin이 true면 30일, false면 7일로 만료 시간 설정
     const expiresInDays = keepLogin ? 30 : 7;
     const sessionId = await createSession(env['nam-web-app-db'], user.id, expiresInDays);
 
-    // 8. 마지막 로그인 시간 업데이트
+    // 9. 마지막 로그인 시간 업데이트
     // 사용자의 마지막 로그인 시간을 현재 시간으로 업데이트
     await updateLastLogin(env['nam-web-app-db'], user.id);
 
-    // 9. 성공 응답 생성
+    // 10. 성공 응답 생성
     // 세션 쿠키를 포함한 응답 생성
     const response = Response.json(
       {
@@ -104,7 +126,7 @@ export async function onRequestPost(context) {
       { status: 200 }
     );
 
-    // 10. 세션 쿠키 설정
+    // 11. 세션 쿠키 설정
     // HttpOnly: JavaScript에서 접근 불가 (XSS 공격 방지)
     // Secure: HTTPS에서만 전송 (프로덕션 환경)
     // SameSite=Lax: CSRF 공격 방지
@@ -123,7 +145,7 @@ export async function onRequestPost(context) {
     return response;
 
   } catch (error) {
-    // 11. 에러 처리
+    // 12. 에러 처리
     // 예상치 못한 오류 발생 시 로그를 남기고 안전한 에러 메시지 반환
     console.error('로그인 오류:', error);
     return Response.json(
