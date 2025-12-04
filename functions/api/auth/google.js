@@ -44,8 +44,14 @@ export async function onRequestGet(context) {
     googleAuthUrl.searchParams.set('state', state);
     
     // state를 쿠키에 저장 (CSRF 보호)
-    const response = Response.redirect(googleAuthUrl.toString(), 302);
-    response.headers.set('Set-Cookie', `oauth_state=${state}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600`);
+    // Response.redirect()는 immutable이므로 헤더를 포함한 새 Response 생성
+    const response = new Response(null, {
+      status: 302,
+      headers: {
+        'Location': googleAuthUrl.toString(),
+        'Set-Cookie': `oauth_state=${state}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600`
+      }
+    });
     
     return response;
   } catch (error) {
