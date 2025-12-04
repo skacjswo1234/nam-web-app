@@ -22,9 +22,10 @@
  */
 export async function createSession(db, userId, expiresInDays = 7) {
   try {
-    // UUID 생성 (세션 ID)
+    // UUID 생성 (세션 ID 및 토큰)
     // crypto.randomUUID()는 Cloudflare Workers 환경에서 사용 가능
     const sessionId = crypto.randomUUID();
+    const token = crypto.randomUUID(); // token 컬럼용 별도 UUID
     
     // 만료 시간 계산
     // 현재 시간에서 지정된 일수만큼 더한 시간
@@ -32,11 +33,12 @@ export async function createSession(db, userId, expiresInDays = 7) {
     expiresAt.setDate(expiresAt.getDate() + expiresInDays);
     
     // 세션을 데이터베이스에 저장
+    // 스키마에 token 컬럼이 필수이므로 함께 저장
     await db
       .prepare(
-        'INSERT INTO sessions (id, user_id, expires_at, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)'
+        'INSERT INTO sessions (id, user_id, token, expires_at, created_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)'
       )
-      .bind(sessionId, userId, expiresAt.toISOString())
+      .bind(sessionId, userId, token, expiresAt.toISOString())
       .run();
     
     return sessionId;

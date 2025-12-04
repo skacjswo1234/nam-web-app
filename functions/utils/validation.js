@@ -141,10 +141,24 @@ export async function hashPassword(password) {
  * @returns {Promise<boolean>} - 일치하면 true
  */
 export async function verifyPassword(password, hash) {
+  // 해시가 없거나 형식이 잘못된 경우 처리
+  if (!hash || typeof hash !== 'string') {
+    return false;
+  }
+  
   // 저장된 해시에서 솔트와 해시 추출
-  const [saltHex, hashHex] = hash.split(':');
+  const parts = hash.split(':');
+  if (parts.length !== 2) {
+    return false;
+  }
+  
+  const [saltHex, hashHex] = parts;
   
   // hex 문자열을 바이트 배열로 변환
+  if (!saltHex || !hashHex) {
+    return false;
+  }
+  
   const salt = new Uint8Array(
     saltHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16))
   );
