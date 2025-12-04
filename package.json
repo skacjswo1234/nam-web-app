@@ -1,0 +1,18 @@
+{
+  "name": "nam-web-app",
+  "version": "1.0.0",
+  "description": "NAM 웹앱 - 로그인/회원가입",
+  "scripts": {
+    "dev": "wrangler pages dev . --d1=DB=nam-db --local",
+    "deploy": "wrangler pages deploy .",
+    "db:migrate": "wrangler d1 migrations apply nam-db",
+    "db:migrate:local": "wrangler d1 migrations apply nam-db --local"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
+

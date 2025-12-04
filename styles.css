@@ -303,6 +303,14 @@ body {
     animation: shake 0.3s ease-in-out;
 }
 
+/* 성공 메시지 (에러 메시지 스타일 재사용) */
+.error-message.success {
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #166534;
+    animation: fadeInUp 0.3s ease-out;
+}
+
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-8px); }
