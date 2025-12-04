@@ -30,7 +30,7 @@ body {
 .header-container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 16px 24px;
+    padding: 8px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -49,7 +49,7 @@ body {
 }
 
 .header-logo .logo-img {
-    height: 120px;
+    height: 40px;
     width: auto;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
@@ -181,11 +181,11 @@ body {
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .header-container {
-        padding: 12px 20px;
+        padding: 8px 20px;
     }
 
     .header-logo .logo-img {
-        height: 96px;
+        height: 36px;
     }
 
     .user-name {
@@ -207,6 +207,10 @@ body {
 
 @media (max-width: 480px) {
     .header-container {
-        padding: 10px 16px;
+        padding: 8px 16px;
+    }
+
+    .header-logo .logo-img {
+        height: 32px;
     }
 }
