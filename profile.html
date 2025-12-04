@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>홈 - NAM</title>
+    <title>내 프로필 - NAM</title>
     <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="profile.css">
 </head>
 <body>
     <!-- 헤더 -->
@@ -14,7 +15,9 @@
         <div class="header-container">
             <!-- 왼쪽: 로고 -->
             <div class="header-logo">
-                <img src="images/logo.png" alt="NAM" class="logo-img">
+                <a href="/main.html">
+                    <img src="images/logo.png" alt="NAM" class="logo-img">
+                </a>
             </div>
 
             <!-- 오른쪽: 나의 정보 -->
@@ -57,13 +60,56 @@
     </header>
 
     <!-- 메인 콘텐츠 -->
-    <main class="main-content">
-        <!-- 히어로 섹션 -->
-        <section class="hero-section">
-            <!-- 히어로 내용은 나중에 추가 -->
-        </section>
+    <main class="profile-main">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h1 class="profile-title">내 프로필</h1>
+                <p class="profile-subtitle">개인정보를 확인하고 수정할 수 있습니다.</p>
+            </div>
+
+            <!-- 프로필 정보 폼 -->
+            <form class="profile-form" id="profileForm" onsubmit="handleProfileUpdate(event)">
+                <!-- 이름 -->
+                <div class="form-group">
+                    <label for="name">이름</label>
+                    <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required>
+                </div>
+
+                <!-- 이메일 -->
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required readonly>
+                    <span class="form-hint">이메일은 변경할 수 없습니다.</span>
+                </div>
+
+                <!-- 가입일 -->
+                <div class="form-group">
+                    <label>가입일</label>
+                    <div class="form-readonly" id="createdAt">-</div>
+                </div>
+
+                <!-- 마지막 로그인 -->
+                <div class="form-group">
+                    <label>마지막 로그인</label>
+                    <div class="form-readonly" id="lastLogin">-</div>
+                </div>
+
+                <!-- 에러 메시지 -->
+                <div id="error-message" class="error-message" style="display: none;"></div>
+
+                <!-- 성공 메시지 -->
+                <div id="success-message" class="success-message" style="display: none;"></div>
+
+                <!-- 버튼 -->
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='/main.html'">취소</button>
+                    <button type="submit" class="btn-primary" id="saveBtn">저장</button>
+                </div>
+            </form>
+        </div>
     </main>
 
-    <script src="main.js"></script>
+    <script src="profile.js"></script>
 </body>
 </html>
+

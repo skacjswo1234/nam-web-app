@@ -208,3 +208,45 @@ export async function updateLastLogin(db, userId) {
   }
 }
 
+/**
+ * 사용자 정보 업데이트
+ * 
+ * 목적:
+ * - 프로필 수정 시 사용자 정보 업데이트
+ * - 이름 등 개인정보 수정
+ * 
+ * @param {D1Database} db - D1 데이터베이스 인스턴스
+ * @param {number} userId - 사용자 ID
+ * @param {object} userData - 업데이트할 사용자 데이터
+ * @param {string} userData.name - 사용자 이름 (선택사항)
+ * @returns {Promise<void>}
+ */
+export async function updateUser(db, userId, userData) {
+  try {
+    const { name } = userData;
+    const updates = [];
+    const values = [];
+    
+    if (name !== undefined) {
+      updates.push('name = ?');
+      values.push(name.trim());
+    }
+    
+    if (updates.length === 0) {
+      throw new Error('업데이트할 데이터가 없습니다.');
+    }
+    
+    // updated_at도 함께 업데이트
+    updates.push('updated_at = CURRENT_TIMESTAMP');
+    values.push(userId);
+    
+    await db
+      .prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`)
+      .bind(...values)
+      .run();
+  } catch (error) {
+    console.error('사용자 정보 업데이트 오류:', error);
+    throw error;
+  }
+}
+
