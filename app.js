@@ -62,8 +62,8 @@ async function handleLogin(event) {
         }
         
         if (response.ok && data.success) {
-            // 로그인 성공 시 대시보드로 리다이렉트
-            window.location.href = '/dashboard.html';
+            // 로그인 성공 시 메인 페이지로 리다이렉트
+            window.location.href = '/main.html';
         } else {
             // 로그인 실패 시 에러 메시지 표시
             showError(data.error || '로그인에 실패했습니다.');
@@ -265,9 +265,9 @@ async function checkLoginStatus() {
             return;
         }
         
-        // 이미 로그인되어 있으면 대시보드로 리다이렉트
+        // 이미 로그인되어 있으면 메인 페이지로 리다이렉트
         if (response.ok && data.success) {
-            window.location.href = '/dashboard.html';
+            window.location.href = '/main.html';
         }
     } catch (error) {
         // 에러가 발생해도 로그인 페이지는 계속 표시

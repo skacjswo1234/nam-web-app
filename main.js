@@ -1,5 +1,5 @@
 /**
- * 대시보드 JavaScript
+ * 메인 홈페이지 JavaScript
  * 
  * 목적:
  * - 사용자 정보 표시
