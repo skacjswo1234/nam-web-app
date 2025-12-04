@@ -252,15 +252,6 @@ body {
     box-shadow: 0 4px 8px rgba(3, 199, 90, 0.3);
 }
 
-.social-icon.facebook {
-    background: #1877F2;
-}
-
-.social-icon.facebook:hover {
-    background: #166FE5;
-    box-shadow: 0 4px 8px rgba(24, 119, 242, 0.3);
-}
-
 .social-icon.google {
     background: white;
     border: 1px solid var(--border-color);

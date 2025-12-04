@@ -66,8 +66,7 @@ export async function onRequestPost(context) {
       // 소셜 로그인 사용자는 일반 로그인 불가
       const providerName = user.provider === 'google' ? '구글' : 
                            user.provider === 'kakao' ? '카카오' :
-                           user.provider === 'naver' ? '네이버' :
-                           user.provider === 'facebook' ? '페이스북' : '소셜';
+                           user.provider === 'naver' ? '네이버' : '소셜';
       return Response.json(
         { 
           success: false, 
