@@ -48,7 +48,18 @@ async function handleLogin(event) {
             }),
         });
         
-        const data = await response.json();
+        // 응답이 JSON인지 확인
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonError) {
+            // JSON 파싱 실패 시
+            console.error('응답 파싱 오류:', jsonError);
+            showError('서버 응답을 처리하는 중 오류가 발생했습니다.');
+            loginBtn.classList.remove('loading');
+            loginBtn.disabled = false;
+            return;
+        }
         
         if (response.ok && data.success) {
             // 로그인 성공 시 대시보드로 리다이렉트
@@ -94,10 +105,18 @@ function showError(message) {
     if (errorEl) {
         errorEl.textContent = message;
         errorEl.style.display = 'block';
+        // 에러 메시지 스타일 초기화 (성공 메시지 스타일 제거)
+        errorEl.style.background = '';
+        errorEl.style.borderColor = '';
+        errorEl.style.color = '';
         errorEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         setTimeout(() => {
             errorEl.style.display = 'none';
         }, 5000);
+    } else {
+        // 에러 요소가 없으면 콘솔에 출력하고 alert 표시
+        console.error('에러 메시지 요소를 찾을 수 없습니다:', message);
+        alert(message);
     }
 }
 
@@ -236,7 +255,15 @@ async function checkLoginStatus() {
             credentials: 'include'
         });
         
-        const data = await response.json();
+        // 응답이 JSON인지 확인
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonError) {
+            // JSON 파싱 실패 시 무시 (로그인 페이지 계속 표시)
+            console.warn('로그인 상태 확인 응답 파싱 오류 (무시됨):', jsonError);
+            return;
+        }
         
         // 이미 로그인되어 있으면 대시보드로 리다이렉트
         if (response.ok && data.success) {
@@ -286,27 +313,28 @@ document.addEventListener('DOMContentLoaded', function() {
         // URL 파라미터에서 signup=success가 있으면 성공 메시지 표시
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('signup') === 'success') {
-        // 성공 메시지를 에러 메시지 영역에 표시 (스타일 재사용)
-        const errorEl = document.getElementById('error-message');
-        if (errorEl) {
-            errorEl.style.display = 'block';
-            errorEl.style.background = '#f0fdf4';
-            errorEl.style.borderColor = '#86efac';
-            errorEl.style.color = '#166534';
-            errorEl.textContent = '회원가입이 완료되었습니다. 로그인해주세요.';
-            
-            // 5초 후 자동으로 숨김
-            setTimeout(() => {
-                errorEl.style.display = 'none';
-                // URL에서 파라미터 제거 (새로고침 시 메시지가 다시 나타나지 않도록)
-                // 안전하게 처리 (일부 환경에서 history API 접근이 제한될 수 있음)
-                try {
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                } catch (historyError) {
-                    // history API 접근이 차단된 경우 무시
-                    console.warn('History API 접근 불가:', historyError);
-                }
-            }, 5000);
+            // 성공 메시지를 에러 메시지 영역에 표시 (스타일 재사용)
+            const errorEl = document.getElementById('error-message');
+            if (errorEl) {
+                errorEl.style.display = 'block';
+                errorEl.style.background = '#f0fdf4';
+                errorEl.style.borderColor = '#86efac';
+                errorEl.style.color = '#166534';
+                errorEl.textContent = '회원가입이 완료되었습니다. 로그인해주세요.';
+                
+                // 5초 후 자동으로 숨김
+                setTimeout(() => {
+                    errorEl.style.display = 'none';
+                    // URL에서 파라미터 제거 (새로고침 시 메시지가 다시 나타나지 않도록)
+                    // 안전하게 처리 (일부 환경에서 history API 접근이 제한될 수 있음)
+                    try {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    } catch (historyError) {
+                        // history API 접근이 차단된 경우 무시
+                        console.warn('History API 접근 불가:', historyError);
+                    }
+                }, 5000);
+            }
         }
     } catch (error) {
         // Storage나 다른 API 접근 오류가 발생해도 페이지는 정상 동작하도록 처리
