@@ -1,5 +1,13 @@
-// 로그인 처리
-function handleLogin(event) {
+/**
+ * 로그인 처리 함수
+ * 
+ * 목적:
+ * - 로그인 폼 제출 시 클라이언트 측 유효성 검사 수행
+ * - 백엔드 API로 로그인 요청 전송
+ * - 성공 시 대시보드로 리다이렉트
+ * - 실패 시 에러 메시지 표시
+ */
+async function handleLogin(event) {
     event.preventDefault();
     
     const form = event.target;
@@ -21,17 +29,42 @@ function handleLogin(event) {
         return;
     }
     
-    // 로딩 상태
+    // 로딩 상태 표시
     loginBtn.classList.add('loading');
     loginBtn.disabled = true;
     
-    // TODO: 백엔드 API 호출
-    setTimeout(() => {
-        console.log('로그인 시도:', { email, keepLogin });
-        alert('로그인 기능은 백엔드 연동 후 구현됩니다.\n입력된 정보:\n이메일: ' + email);
+    try {
+        // 백엔드 API로 로그인 요청 전송
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                email,
+                password,
+                keepLogin,
+            }),
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            // 로그인 성공 시 대시보드로 리다이렉트
+            window.location.href = '/dashboard.html';
+        } else {
+            // 로그인 실패 시 에러 메시지 표시
+            showError(data.error || '로그인에 실패했습니다.');
+            loginBtn.classList.remove('loading');
+            loginBtn.disabled = false;
+        }
+    } catch (error) {
+        console.error('로그인 오류:', error);
+        showError('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
         loginBtn.classList.remove('loading');
         loginBtn.disabled = false;
-    }, 1000);
+    }
 }
 
 // 소셜 로그인
