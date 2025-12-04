@@ -20,8 +20,8 @@ body {
 
 /* 헤더 스타일 */
 .main-header {
-    background: #000000;
-    border-bottom: 1px solid #333333;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -73,17 +73,17 @@ body {
     gap: 10px;
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid #333333;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
     font-size: 14px;
-    color: #ffffff;
+    color: #1a1a1a;
 }
 
 .user-button:hover {
-    background: #1a1a1a;
-    border-color: #555555;
+    background: #f9fafb;
+    border-color: #d1d5db;
 }
 
 .user-avatar {
