@@ -95,8 +95,8 @@ function loginWithFacebook() {
 }
 
 function loginWithGoogle() {
-    console.log('구글 로그인');
-    alert('구글 로그인 기능은 백엔드 연동 후 구현됩니다.');
+    // 구글 로그인 시작 - 백엔드 API로 리디렉션
+    window.location.href = '/api/auth/google';
 }
 
 // 에러 메시지 표시
@@ -244,8 +244,8 @@ function signupWithFacebook() {
 }
 
 function signupWithGoogle() {
-    console.log('구글 회원가입');
-    alert('구글 회원가입 기능은 백엔드 연동 후 구현됩니다.');
+    // 구글 로그인 시작 (회원가입과 로그인이 동일한 플로우)
+    window.location.href = '/api/auth/google';
 }
 
 // 로그인 페이지에서 이미 로그인된 상태인지 확인

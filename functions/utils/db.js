@@ -104,6 +104,103 @@ export async function createUser(db, userData) {
 }
 
 /**
+ * 소셜 로그인 사용자 생성 또는 조회
+ * 
+ * 목적:
+ * - 소셜 로그인 시 사용자 정보를 데이터베이스에 저장하거나 조회
+ * - provider와 provider_id로 기존 사용자 확인
+ * - 같은 이메일이 있으면 계정 연결
+ * 
+ * @param {D1Database} db - D1 데이터베이스 인스턴스
+ * @param {object} userData - 사용자 데이터
+ * @param {string} userData.provider - 소셜 로그인 제공자 ('google', 'kakao', 'naver' 등)
+ * @param {string} userData.providerId - 소셜 로그인 제공자의 고유 ID
+ * @param {string} userData.email - 이메일 주소
+ * @param {string} userData.name - 사용자 이름
+ * @param {string} userData.avatarUrl - 프로필 사진 URL (선택사항)
+ * @returns {Promise<object>} - 사용자 정보 (id, email, name 등)
+ */
+export async function createOrGetSocialUser(db, userData) {
+  try {
+    const { provider, providerId, email, name, avatarUrl } = userData;
+    const normalizedEmail = email.trim().toLowerCase();
+    
+    // 1. provider와 provider_id로 기존 사용자 조회
+    const existingUser = await db
+      .prepare('SELECT * FROM users WHERE provider = ? AND provider_id = ? LIMIT 1')
+      .bind(provider, providerId)
+      .first();
+    
+    if (existingUser) {
+      // 기존 사용자 발견 - 마지막 로그인 시간 업데이트
+      await updateLastLogin(db, existingUser.id);
+      return existingUser;
+    }
+    
+    // 2. 같은 이메일로 가입한 사용자가 있는지 확인
+    const emailUser = await db
+      .prepare('SELECT * FROM users WHERE email = ? LIMIT 1')
+      .bind(normalizedEmail)
+      .first();
+    
+    if (emailUser) {
+      // 같은 이메일이 있으면 계정 연결 (provider_id 추가)
+      await db
+        .prepare('UPDATE users SET provider_id = ?, provider = ?, avatar_url = ?, email_verified = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+        .bind(providerId, provider, avatarUrl || null, emailUser.id)
+        .run();
+      
+      // 업데이트된 사용자 정보 반환
+      const updatedUser = await db
+        .prepare('SELECT * FROM users WHERE id = ? LIMIT 1')
+        .bind(emailUser.id)
+        .first();
+      
+      await updateLastLogin(db, updatedUser.id);
+      return updatedUser;
+    }
+    
+    // 3. 새 사용자 생성 (소셜 로그인)
+    const result = await db
+      .prepare(`
+        INSERT INTO users (
+          email,
+          password_hash,
+          name,
+          provider,
+          provider_id,
+          avatar_url,
+          email_verified,
+          created_at,
+          updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      `)
+      .bind(
+        normalizedEmail,
+        null, // 소셜 로그인은 비밀번호 없음
+        name.trim(),
+        provider,
+        providerId,
+        avatarUrl || null,
+        1 // 소셜 로그인은 이메일 인증 완료로 간주
+      )
+      .run();
+    
+    // 생성된 사용자 정보 반환
+    const newUser = await db
+      .prepare('SELECT * FROM users WHERE id = ? LIMIT 1')
+      .bind(result.meta.last_row_id)
+      .first();
+    
+    await updateLastLogin(db, newUser.id);
+    return newUser;
+  } catch (error) {
+    console.error('소셜 로그인 사용자 생성/조회 오류:', error);
+    throw error;
+  }
+}
+
+/**
  * 이메일로 사용자 조회
  * 
  * 목적:
@@ -249,4 +346,3 @@ export async function updateUser(db, userId, userData) {
     throw error;
   }
 }
-

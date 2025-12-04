@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NULL,  -- NULL 허용 (소셜 로그인 사용자는 비밀번호 없음)
+    password_hash TEXT NULL,  
     name TEXT NOT NULL,
     provider TEXT DEFAULT 'email',
     provider_id TEXT,
