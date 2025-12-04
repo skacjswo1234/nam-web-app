@@ -101,8 +101,8 @@ function loginWithKakao() {
 }
 
 function loginWithNaver() {
-    console.log('네이버 로그인');
-    alert('네이버 로그인 기능은 백엔드 연동 후 구현됩니다.');
+    // 네이버 로그인 시작 - 백엔드 API로 리디렉션
+    window.location.href = '/api/auth/naver';
 }
 
 function loginWithFacebook() {
@@ -281,8 +281,8 @@ function signupWithKakao() {
 }
 
 function signupWithNaver() {
-    console.log('네이버 회원가입');
-    alert('네이버 회원가입 기능은 백엔드 연동 후 구현됩니다.');
+    // 네이버 로그인 시작 (회원가입과 로그인이 동일한 플로우)
+    window.location.href = '/api/auth/naver';
 }
 
 function signupWithFacebook() {

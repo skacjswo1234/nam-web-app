@@ -1,0 +1,114 @@
+warning: in the working copy of 'app.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'functions/api/auth/login.js', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/app.js b/app.js[m
+[1mindex 1fb9307..4da1c04 100644[m
+[1m--- a/app.js[m
+[1m+++ b/app.js[m
+[36m@@ -66,7 +66,16 @@[m [masync function handleLogin(event) {[m
+             window.location.href = '/main.html';[m
+         } else {[m
+             // 로그인 실패 시 에러 메시지 표시[m
+[31m-            showError(data.error || '로그인에 실패했습니다.');[m
+[32m+[m[32m            if (data.suggestSignup) {[m
+[32m+[m[32m                // 사용자가 없을 가능성이 높은 경우 - 소셜 로그인 및 회원가입 유도[m
+[32m+[m[32m                showErrorWithSuggestion([m
+[32m+[m[32m                    data.error || '로그인에 실패했습니다.',[m
+[32m+[m[32m                    '아직 회원이 아니신가요? 소셜 로그인 또는 회원가입을 이용해주세요.'[m
+[32m+[m[32m                );[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                // 비밀번호 오류 등 - 일반 에러 메시지[m
+[32m+[m[32m                showError(data.error || '로그인에 실패했습니다.');[m
+[32m+[m[32m            }[m
+             loginBtn.classList.remove('loading');[m
+             loginBtn.disabled = false;[m
+         }[m
+[36m@@ -103,12 +112,9 @@[m [mfunction loginWithGoogle() {[m
+ function showError(message) {[m
+     const errorEl = document.getElementById('error-message');[m
+     if (errorEl) {[m
+[31m-        errorEl.textContent = message;[m
+[32m+[m[32m        errorEl.innerHTML = `<div class="error-text">${message}</div>`;[m
+[32m+[m[32m        errorEl.className = 'error-message';[m
+         errorEl.style.display = 'block';[m
+[31m-        // 에러 메시지 스타일 초기화 (성공 메시지 스타일 제거)[m
+[31m-        errorEl.style.background = '';[m
+[31m-        errorEl.style.borderColor = '';[m
+[31m-        errorEl.style.color = '';[m
+         errorEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });[m
+         setTimeout(() => {[m
+             errorEl.style.display = 'none';[m
+[36m@@ -120,6 +126,40 @@[m [mfunction showError(message) {[m
+     }[m
+ }[m
+ [m
+[32m+[m[32m// 에러 메시지 표시 (소셜 로그인 및 회원가입 유도 포함)[m
+[32m+[m[32mfunction showErrorWithSuggestion(errorMessage, suggestionMessage) {[m
+[32m+[m[32m    const errorEl = document.getElementById('error-message');[m
+[32m+[m[32m    if (errorEl) {[m
+[32m+[m[32m        errorEl.innerHTML = `[m
+[32m+[m[32m            <div class="error-text">${errorMessage}</div>[m
+[32m+[m[32m            <div class="error-suggestion">[m
+[32m+[m[32m                <p>${suggestionMessage}</p>[m
+[32m+[m[32m                <div class="suggestion-actions">[m
+[32m+[m[32m                    <a href="signup.html" class="suggestion-link suggestion-link-primary">회원가입하기</a>[m
+[32m+[m[32m                    <span class="suggestion-divider">또는</span>[m
+[32m+[m[32m                    <button type="button" class="suggestion-link suggestion-link-social" onclick="loginWithGoogle()">[m
+[32m+[m[32m                        <svg viewBox="0 0 24 24" width="16" height="16" style="margin-right: 4px;">[m
+[32m+[m[32m                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>[m
+[32m+[m[32m                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>[m
+[32m+[m[32m                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>[m
+[32m+[m[32m                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>[m
+[32m+[m[32m                        </svg>[m
+[32m+[m[32m                        구글 로그인[m
+[32m+[m[32m                    </button>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m        `;[m
+[32m+[m[32m        errorEl.className = 'error-message error-message-with-suggestion';[m
+[32m+[m[32m        errorEl.style.display = 'block';[m
+[32m+[m[32m        errorEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });[m
+[32m+[m[32m        setTimeout(() => {[m
+[32m+[m[32m            errorEl.style.display = 'none';[m
+[32m+[m[32m        }, 10000); // 제안 메시지는 조금 더 길게 표시[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m        alert(errorMessage + '\n\n' + suggestionMessage);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+ /**[m
+  * 회원가입 처리 함수[m
+  * [m
+[1mdiff --git a/functions/api/auth/login.js b/functions/api/auth/login.js[m
+[1mindex 3c00541..ed25046 100644[m
+[1m--- a/functions/api/auth/login.js[m
+[1m+++ b/functions/api/auth/login.js[m
+[36m@@ -49,10 +49,13 @@[m [mexport async function onRequestPost(context) {[m
+     // 4. 사용자 존재 여부 확인[m
+     // 사용자가 없거나 비밀번호 해시가 없으면 로그인 실패[m
+     if (!user || !user.password_hash) {[m
+[31m-      // 보안상 구체적인 오류 메시지 대신 일반적인 메시지 반환[m
+[31m-      // 이메일이 존재하는지 비밀번호가 틀렸는지 구분하지 않음 (보안 강화)[m
+[32m+[m[32m      // 사용자가 존재하지 않거나 소셜 로그인 사용자인 경우[m
+       return Response.json([m
+[31m-        { success: false, error: '이메일 또는 비밀번호가 올바르지 않습니다.' },[m
+[32m+[m[32m        {[m[41m [m
+[32m+[m[32m          success: false,[m[41m [m
+[32m+[m[32m          error: '이메일 또는 비밀번호가 올바르지 않습니다.',[m
+[32m+[m[32m          suggestSignup: true // 회원가입/소셜 로그인 유도 플래그[m
+[32m+[m[32m        },[m
+         { status: 401 } // 401 Unauthorized: 인증 실패[m
+       );[m
+     }[m
+[36m@@ -73,7 +76,11 @@[m [mexport async function onRequestPost(context) {[m
+     if (!isPasswordValid) {[m
+       // 비밀번호가 틀렸을 때도 구체적인 메시지 대신 일반적인 메시지 반환[m
+       return Response.json([m
+[31m-        { success: false, error: '이메일 또는 비밀번호가 올바르지 않습니다.' },[m
+[32m+[m[32m        {[m[41m [m
+[32m+[m[32m          success: false,[m[41m [m
+[32m+[m[32m          error: '이메일 또는 비밀번호가 올바르지 않습니다.',[m
+[32m+[m[32m          suggestSignup: false // 비밀번호 오류는 회원가입 유도 안 함[m
+[32m+[m[32m        },[m
+         { status: 401 }[m
+       );[m
+     }[m
