@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#667eea">
+    <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>홈 - NAM</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
@@ -18,7 +17,7 @@
                 <img src="images/logo.png" alt="NAM" class="logo-img">
             </div>
 
-            <!-- 오른쪽: 사용자 정보 및 메뉴 -->
+            <!-- 오른쪽: 나의 정보 -->
             <div class="header-user">
                 <div class="user-menu" id="userMenu">
                     <button class="user-button" onclick="toggleUserMenu()">
@@ -61,63 +60,10 @@
     <main class="main-content">
         <!-- 히어로 섹션 -->
         <section class="hero-section">
-            <div class="hero-container">
-                <div class="hero-content">
-                    <h1 class="hero-title">
-                        <span class="hero-greeting">안녕하세요,</span>
-                        <span class="hero-name" id="heroUserName">사용자</span>님
-                    </h1>
-                    <p class="hero-subtitle">당신의 브랜드를 홍보해보세요</p>
-                    <div class="hero-actions">
-                        <button class="btn-primary" onclick="startProject()">
-                            프로젝트 시작하기
-                        </button>
-                        <button class="btn-secondary" onclick="viewTutorial()">
-                            가이드 보기
-                        </button>
-                    </div>
-                </div>
-                <div class="hero-image">
-                    <div class="hero-placeholder">
-                        <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
-                            <rect width="200" height="200" rx="20" fill="#f3f4f6"/>
-                            <path d="M100 60L140 100L100 140L60 100L100 60Z" fill="#667eea" opacity="0.2"/>
-                            <circle cx="100" cy="100" r="30" fill="#667eea"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 통계 섹션 (선택사항) -->
-        <section class="stats-section">
-            <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="statProjects">0</div>
-                        <div class="stat-label">프로젝트</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="statUsers">0</div>
-                        <div class="stat-label">사용자</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⭐</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="statRating">0</div>
-                        <div class="stat-label">평점</div>
-                    </div>
-                </div>
-            </div>
+            <!-- 히어로 내용은 나중에 추가 -->
         </section>
     </main>
 
     <script src="main.js"></script>
 </body>
 </html>
-
