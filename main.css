@@ -49,7 +49,7 @@ body {
 }
 
 .header-logo .logo-img {
-    height: 80px;
+    height: 120px;
     width: auto;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
@@ -185,7 +185,7 @@ body {
     }
 
     .header-logo .logo-img {
-        height: 64px;
+        height: 96px;
     }
 
     .user-name {
