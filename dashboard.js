@@ -41,19 +41,20 @@ document.addEventListener('click', function(event) {
 // 사용자 정보 로드
 async function loadUserInfo() {
     try {
-        // TODO: 백엔드 API에서 사용자 정보 가져오기
-        // const response = await fetch('/api/auth/me', {
-        //     credentials: 'include'
-        // });
-        // const user = await response.json();
+        // 백엔드 API에서 사용자 정보 가져오기
+        const response = await fetch('/api/auth/me', {
+            credentials: 'include'
+        });
         
-        // 임시 데이터 (실제로는 API에서 가져옴)
-        const user = {
-            id: 1,
-            name: '남현우',
-            email: '9078807@naver.com',
-            avatar_url: null
-        };
+        const data = await response.json();
+        
+        // 세션이 유효하지 않으면 로그인 페이지로 리다이렉트
+        if (!response.ok || !data.success) {
+            window.location.href = '/index.html';
+            return;
+        }
+        
+        const user = data.user;
         
         // 사용자 이름 표시
         const userNameElements = document.querySelectorAll('#userName, #heroUserName');
@@ -83,11 +84,11 @@ async function loadUserInfo() {
 // 로그아웃 처리
 async function handleLogout() {
     try {
-        // TODO: 백엔드 API로 로그아웃 요청
-        // await fetch('/api/auth/logout', {
-        //     method: 'POST',
-        //     credentials: 'include'
-        // });
+        // 백엔드 API로 로그아웃 요청
+        await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
         
         // 세션 스토리지/로컬 스토리지 정리 (안전하게 처리)
         // 현재는 쿠키 기반 세션을 사용하므로 storage는 선택사항
@@ -135,21 +136,8 @@ function viewTutorial() {
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    // 사용자 정보 로드
+    // 사용자 정보 로드 (세션 확인 포함)
+    // loadUserInfo 함수 내에서 세션 확인을 수행하므로 별도로 확인할 필요 없음
     loadUserInfo();
-    
-    // 세션 확인 (로그인되지 않았으면 로그인 페이지로 리다이렉트)
-    // TODO: 실제 세션 확인 로직 구현
-    // 쿠키 기반 세션을 사용하므로 API로 세션 확인
-    // try {
-    //     const response = await fetch('/api/auth/me', {
-    //         credentials: 'include'
-    //     });
-    //     if (!response.ok) {
-    //         window.location.href = '/index.html';
-    //     }
-    // } catch (error) {
-    //     window.location.href = '/index.html';
-    // }
 });
 

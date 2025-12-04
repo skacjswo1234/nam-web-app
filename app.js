@@ -229,15 +229,37 @@ function signupWithGoogle() {
     alert('구글 회원가입 기능은 백엔드 연동 후 구현됩니다.');
 }
 
+// 로그인 페이지에서 이미 로그인된 상태인지 확인
+async function checkLoginStatus() {
+    try {
+        const response = await fetch('/api/auth/me', {
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        // 이미 로그인되어 있으면 대시보드로 리다이렉트
+        if (response.ok && data.success) {
+            window.location.href = '/dashboard.html';
+        }
+    } catch (error) {
+        // 에러가 발생해도 로그인 페이지는 계속 표시
+        // (네트워크 오류 등으로 인한 것일 수 있음)
+        console.warn('로그인 상태 확인 중 오류 (무시됨):', error);
+    }
+}
+
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     // Storage 접근 차단 에러 방지
     // Cloudflare Pages나 특정 브라우저 환경에서 storage 접근이 제한될 수 있음
     // 에러를 무시하고 계속 진행하도록 처리
     try {
-        // 로그인 폼 자동완성 방지 (선택사항)
+        // 로그인 페이지인 경우 이미 로그인된 상태인지 확인
         const loginForm = document.getElementById('loginForm');
         if (loginForm) {
+            // 이미 로그인되어 있으면 대시보드로 리다이렉트
+            checkLoginStatus();
             loginForm.setAttribute('autocomplete', 'off');
         }
         
