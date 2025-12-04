@@ -94,7 +94,7 @@ export async function onRequestPost(context) {
     // 8. 이메일 중복 체크
     // 이미 가입된 이메일인지 데이터베이스에서 확인
     // 중복이면 회원가입을 막아야 함
-    const emailExists = await checkEmailExists(env.DB, email);
+    const emailExists = await checkEmailExists(env['nam-web-app-db'], email);
     if (emailExists) {
       return Response.json(
         { success: false, error: '이미 가입된 이메일입니다.' },
@@ -109,7 +109,7 @@ export async function onRequestPost(context) {
 
     // 10. 사용자 생성
     // 검증이 모두 통과하면 데이터베이스에 사용자 정보 저장
-    const userId = await createUser(env.DB, {
+    const userId = await createUser(env['nam-web-app-db'], {
       name: name.trim(),
       email: email.trim().toLowerCase(), // 이메일은 소문자로 통일
       passwordHash,
