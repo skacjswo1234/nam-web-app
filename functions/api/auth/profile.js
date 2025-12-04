@@ -4,12 +4,16 @@
  * 목적:
  * - 사용자 프로필 정보 업데이트
  * - 이름 등 개인정보 수정
+ * - 비밀번호 변경/설정
  * 
  * 요청 형식:
  * PUT /api/auth/profile
  * Cookie: session=<sessionId>
  * Body: {
  *   name: string (사용자 이름, 선택사항)
+ *   currentPassword: string (비밀번호 변경 시 기존 비밀번호, 일반 회원가입 사용자만)
+ *   newPassword: string (새 비밀번호, 선택사항)
+ *   newPasswordConfirm: string (새 비밀번호 확인, 선택사항)
  * }
  * 
  * 응답 형식:
@@ -19,6 +23,7 @@
 
 import { verifySession } from '../../utils/session.js';
 import { updateUser } from '../../utils/db.js';
+import { hashPassword, verifyPassword, validatePassword } from '../../utils/validation.js';
 
 export async function onRequestPut(context) {
   const { request, env } = context;
@@ -48,11 +53,17 @@ export async function onRequestPut(context) {
       );
     }
 
-    // 5. 요청 본문 파싱
-    const body = await request.json();
-    const { name } = body;
+    // 5. 비밀번호 검증을 위해 전체 사용자 정보 조회 (password_hash 포함)
+    const fullUser = await env['nam-web-app-db']
+      .prepare('SELECT password_hash, provider FROM users WHERE id = ?')
+      .bind(user.id)
+      .first();
 
-    // 6. 유효성 검사
+    // 6. 요청 본문 파싱
+    const body = await request.json();
+    const { name, currentPassword, newPassword, newPasswordConfirm } = body;
+
+    // 7. 이름 유효성 검사
     if (name !== undefined) {
       if (!name || name.trim().length < 2) {
         return Response.json(
@@ -62,10 +73,61 @@ export async function onRequestPut(context) {
       }
     }
 
-    // 7. 사용자 정보 업데이트
-    await updateUser(env['nam-web-app-db'], user.id, {
-      name: name,
-    });
+    // 8. 비밀번호 변경/설정 처리
+    let passwordHash = undefined;
+    if (newPassword) {
+      // 새 비밀번호와 확인이 일치하는지 확인
+      if (newPassword !== newPasswordConfirm) {
+        return Response.json(
+          { success: false, error: '새 비밀번호가 일치하지 않습니다.' },
+          { status: 400 }
+        );
+      }
+
+      // 비밀번호 유효성 검사
+      const passwordValidation = validatePassword(newPassword);
+      if (!passwordValidation.valid) {
+        return Response.json(
+          { success: false, error: passwordValidation.error },
+          { status: 400 }
+        );
+      }
+
+      // 일반 회원가입 사용자(비밀번호가 있는 경우)는 기존 비밀번호 확인 필요
+      if (fullUser.password_hash) {
+        if (!currentPassword) {
+          return Response.json(
+            { success: false, error: '기존 비밀번호를 입력해주세요.' },
+            { status: 400 }
+          );
+        }
+
+        // 기존 비밀번호 검증
+        const isPasswordValid = await verifyPassword(currentPassword, fullUser.password_hash);
+        if (!isPasswordValid) {
+          return Response.json(
+            { success: false, error: '기존 비밀번호가 올바르지 않습니다.' },
+            { status: 400 }
+          );
+        }
+      }
+
+      // 새 비밀번호 해싱
+      passwordHash = await hashPassword(newPassword);
+    }
+
+    // 8. 사용자 정보 업데이트
+    const updateData = {};
+    if (name !== undefined) {
+      updateData.name = name;
+    }
+    if (passwordHash !== undefined) {
+      updateData.passwordHash = passwordHash;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await updateUser(env['nam-web-app-db'], user.id, updateData);
+    }
 
     // 8. 업데이트된 사용자 정보 조회
     const updatedUser = await verifySession(env['nam-web-app-db'], sessionId);

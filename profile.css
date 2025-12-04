@@ -85,6 +85,12 @@
     color: #6b7280;
 }
 
+.form-section-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 24px 0;
+}
+
 /* 에러/성공 메시지 */
 .error-message {
     padding: 12px 16px;

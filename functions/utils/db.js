@@ -320,13 +320,18 @@ export async function updateLastLogin(db, userId) {
  */
 export async function updateUser(db, userId, userData) {
   try {
-    const { name } = userData;
+    const { name, passwordHash } = userData;
     const updates = [];
     const values = [];
     
     if (name !== undefined) {
       updates.push('name = ?');
       values.push(name.trim());
+    }
+    
+    if (passwordHash !== undefined) {
+      updates.push('password_hash = ?');
+      values.push(passwordHash);
     }
     
     if (updates.length === 0) {
