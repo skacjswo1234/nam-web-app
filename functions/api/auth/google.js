@@ -20,8 +20,12 @@ export async function onRequestGet(context) {
     const redirectUri = `${new URL(request.url).origin}/api/auth/google/callback`;
     
     if (!clientId) {
+      console.error('GOOGLE_CLIENT_ID 환경 변수가 설정되지 않았습니다.');
       return Response.json(
-        { success: false, error: '구글 로그인이 설정되지 않았습니다.' },
+        { 
+          success: false, 
+          error: '구글 로그인이 설정되지 않았습니다. 환경 변수 GOOGLE_CLIENT_ID를 확인해주세요.' 
+        },
         { status: 500 }
       );
     }
@@ -46,8 +50,14 @@ export async function onRequestGet(context) {
     return response;
   } catch (error) {
     console.error('구글 로그인 시작 오류:', error);
+    console.error('에러 상세:', error.message);
+    console.error('스택:', error.stack);
     return Response.json(
-      { success: false, error: '구글 로그인 중 오류가 발생했습니다.' },
+      { 
+        success: false, 
+        error: '구글 로그인 중 오류가 발생했습니다.',
+        details: error.message 
+      },
       { status: 500 }
     );
   }
