@@ -89,9 +89,17 @@ async function handleLogout() {
         //     credentials: 'include'
         // });
         
-        // 세션 스토리지/로컬 스토리지 정리
-        localStorage.clear();
-        sessionStorage.clear();
+        // 세션 스토리지/로컬 스토리지 정리 (안전하게 처리)
+        // 현재는 쿠키 기반 세션을 사용하므로 storage는 선택사항
+        try {
+            if (typeof Storage !== 'undefined') {
+                localStorage.clear();
+                sessionStorage.clear();
+            }
+        } catch (storageError) {
+            // Storage 접근이 차단된 경우 무시 (쿠키 기반 세션이므로 문제없음)
+            console.warn('Storage 접근 불가:', storageError);
+        }
         
         // 로그인 페이지로 리다이렉트
         window.location.href = '/index.html';
@@ -123,8 +131,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 세션 확인 (로그인되지 않았으면 로그인 페이지로 리다이렉트)
     // TODO: 실제 세션 확인 로직 구현
-    // const sessionId = localStorage.getItem('sessionId');
-    // if (!sessionId) {
+    // 쿠키 기반 세션을 사용하므로 API로 세션 확인
+    // try {
+    //     const response = await fetch('/api/auth/me', {
+    //         credentials: 'include'
+    //     });
+    //     if (!response.ok) {
+    //         window.location.href = '/index.html';
+    //     }
+    // } catch (error) {
     //     window.location.href = '/index.html';
     // }
 });
