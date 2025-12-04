@@ -49,10 +49,14 @@ body {
 }
 
 .logo-img {
-    max-width: 120px;
+    max-width: 200px;
     height: auto;
     display: block;
     margin: 0 auto;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    image-rendering: high-quality;
+    filter: contrast(1.2) brightness(1.1);
 }
 
 /* 제목 섹션 */
@@ -354,7 +358,7 @@ body {
     }
 
     .logo-img {
-        max-width: 100px;
+        max-width: 160px;
     }
 
     .main-title {
