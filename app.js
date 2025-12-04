@@ -364,12 +364,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const errorEl = document.getElementById('error-message');
             if (errorEl) {
                 errorEl.style.display = 'block';
-                errorEl.style.background = '#f0fdf4';
-                errorEl.style.borderColor = '#86efac';
-                errorEl.style.color = '#166534';
-                errorEl.textContent = '회원가입이 완료되었습니다. 로그인해주세요.';
+                errorEl.style.background = '#000000';
+                errorEl.style.borderColor = '#000000';
+                errorEl.style.color = '#ffffff';
+                errorEl.style.fontWeight = '500';
+                errorEl.innerHTML = `
+                    <div class="error-text" style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" fill="#ffffff" stroke="#ffffff" stroke-width="2"/>
+                            <path d="M7 10L9 12L13 8" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>회원가입이 완료되었습니다. 로그인해주세요.</span>
+                    </div>
+                `;
                 
-                // 5초 후 자동으로 숨김
+                // 메시지를 화면 상단으로 스크롤
+                errorEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+                // 7초 후 자동으로 숨김 (더 길게 표시)
                 setTimeout(() => {
                     errorEl.style.display = 'none';
                     // URL에서 파라미터 제거 (새로고침 시 메시지가 다시 나타나지 않도록)
@@ -380,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         // history API 접근이 차단된 경우 무시
                         console.warn('History API 접근 불가:', historyError);
                     }
-                }, 5000);
+                }, 7000);
             }
         }
     } catch (error) {

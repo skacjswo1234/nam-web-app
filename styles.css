@@ -309,9 +309,9 @@ body {
 
 /* 성공 메시지 (에러 메시지 스타일 재사용) */
 .error-message.success {
-    background: #f0fdf4;
-    border-color: #86efac;
-    color: #166534;
+    background: #000000;
+    border-color: #000000;
+    color: #ffffff;
     animation: fadeInUp 0.3s ease-out;
 }
 
