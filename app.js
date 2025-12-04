@@ -96,8 +96,8 @@ async function handleLogin(event) {
 
 // 소셜 로그인
 function loginWithKakao() {
-    console.log('카카오톡 로그인');
-    alert('카카오톡 로그인 기능은 백엔드 연동 후 구현됩니다.');
+    // 카카오 로그인 시작 - 백엔드 API로 리디렉션
+    window.location.href = '/api/auth/kakao';
 }
 
 function loginWithNaver() {
@@ -276,8 +276,8 @@ async function handleSignup(event) {
 
 // 소셜 회원가입
 function signupWithKakao() {
-    console.log('카카오톡 회원가입');
-    alert('카카오톡 회원가입 기능은 백엔드 연동 후 구현됩니다.');
+    // 카카오 로그인 시작 (회원가입과 로그인이 동일한 플로우)
+    window.location.href = '/api/auth/kakao';
 }
 
 function signupWithNaver() {
