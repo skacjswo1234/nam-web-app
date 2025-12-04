@@ -88,7 +88,6 @@ export async function onRequestGet(context) {
     const userInfoResponse = await fetch('https://kapi.kakao.com/v2/user/me', {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
     

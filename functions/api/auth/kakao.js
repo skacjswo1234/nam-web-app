@@ -38,8 +38,13 @@ export async function onRequestGet(context) {
     kakaoAuthUrl.searchParams.set('client_id', clientId);
     kakaoAuthUrl.searchParams.set('redirect_uri', redirectUri);
     kakaoAuthUrl.searchParams.set('response_type', 'code');
+    // 카카오 scope는 공백으로 구분 (URL 인코딩 시 자동으로 처리됨)
     kakaoAuthUrl.searchParams.set('scope', 'profile_nickname profile_image account_email');
     kakaoAuthUrl.searchParams.set('state', state);
+    
+    // 디버깅용 로그 (프로덕션에서는 제거 가능)
+    console.log('카카오 로그인 URL:', kakaoAuthUrl.toString());
+    console.log('Redirect URI:', redirectUri);
     
     // state를 쿠키에 저장 (CSRF 보호)
     // Response.redirect()는 immutable이므로 헤더를 포함한 새 Response 생성
